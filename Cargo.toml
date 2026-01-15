@@ -23,9 +23,11 @@ tracing = { version = "0.1", optional = true }
 tracing-subscriber = { version = "0.3", optional = true }
 futures-util = { version = "0.3", optional = true }
 uuid = { version = "1.6", features = ["v4"], optional = true }
+leptos_meta = { version = "0.8", optional = true }
+js-sys = { version = "0.3.85", optional = true }
 
 [features]
-hydrate = ["leptos", "leptos_router", "wasm-bindgen", "console_error_panic_hook",  "web-sys"]
+hydrate = ["leptos", "leptos_router", "leptos_meta", "wasm-bindgen", "console_error_panic_hook",  "web-sys", "js-sys"]
 ssr = ["axum", "tokio", "tower-http", "tracing", "tracing-subscriber", "futures-util", "uuid"]
 
 [[bin]]
