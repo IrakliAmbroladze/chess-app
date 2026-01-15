@@ -1,12 +1,12 @@
 use leptos::prelude::*;
-use leptos_router::hooks::use_navigate;
+use leptos_router::hooks::*;
 
 #[component]
 pub fn Home() -> impl IntoView {
     let navigate = use_navigate();
     let navigate_clone1 = navigate.clone();
     let create_game = move |_| {
-        let code = 12;
+        let code = generate_room_code();
         navigate_clone1(&format!("/game/{}?action=create", code), Default::default());
     };
     view! {
@@ -15,4 +15,14 @@ pub fn Home() -> impl IntoView {
             <button on:click=create_game>"Create New Game"</button>
         </div>
     }
+}
+
+fn generate_room_code() -> String {
+    let chars: Vec<char> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".chars().collect();
+    (0..6)
+        .map(|_| {
+            let idx = (js_sys::Math::random() * chars.len() as f64) as usize;
+            chars[idx]
+        })
+        .collect()
 }
