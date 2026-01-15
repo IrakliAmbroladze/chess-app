@@ -1,15 +1,19 @@
 #[cfg(feature = "hydrate")]
-use leptos::*;
+use leptos::prelude::*;
 #[cfg(feature = "hydrate")]
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "hydrate")]
 #[component]
 pub fn App() -> impl IntoView {
+    let (count, set_count) = signal(0);
+
     view! {
-        <div>
-            <h1>"Hello world!"</h1>
-            <button>Click me</button>
+        <div class="app">
+            <h1>"Hello Leptos!"</h1>
+            <button on:click=move |_| set_count.update(|n| *n += 1)>
+                "Count: " {count}
+            </button>
         </div>
     }
 }
@@ -18,5 +22,5 @@ pub fn App() -> impl IntoView {
 #[wasm_bindgen(start)]
 pub fn main() {
     console_error_panic_hook::set_once();
-    leptos::mount_to_body(|| view! { <App/> });
+    leptos::mount::mount_to_body(App);
 }
