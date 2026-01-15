@@ -1,5 +1,4 @@
-use leptos::*;
-use leptos_router::*;
+use leptos::prelude::*;
 
 #[component]
 pub fn Home() -> impl IntoView {
