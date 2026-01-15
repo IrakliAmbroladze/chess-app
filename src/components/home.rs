@@ -5,11 +5,21 @@ use leptos_router::hooks::*;
 pub fn Home() -> impl IntoView {
     let (room_code, set_room_code) = signal(String::new());
     let navigate = use_navigate();
+
     let navigate_clone1 = navigate.clone();
     let create_game = move |_| {
         let code = generate_room_code();
         navigate_clone1(&format!("/game/{}?action=create", code), Default::default());
     };
+
+    let navigate_clone2 = navigate.clone();
+    let join_game = move |_| {
+        let code = room_code.get();
+        if !code.is_empty() {
+            navigate_clone2(&format!("/game/{}?action=join", code), Default::default());
+        }
+    };
+
     view! {
         <div>
             <h1>"Chess Game"</h1>
@@ -20,6 +30,7 @@ pub fn Home() -> impl IntoView {
                 prop:value=room_code
                 on:input=move |ev| set_room_code.set(event_target_value(&ev))
             />
+            <button on:click=join_game>"Join Game"</button>
         </div>
     }
 }
