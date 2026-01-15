@@ -1,22 +1,31 @@
 #[cfg(feature = "hydrate")]
 use leptos::prelude::*;
 #[cfg(feature = "hydrate")]
+use leptos_router::components::*;
+#[cfg(feature = "hydrate")]
+use leptos_router::StaticSegment;
+#[cfg(feature = "hydrate")]
 use wasm_bindgen::prelude::*;
+
+#[cfg(feature = "hydrate")]
+mod components;
 #[cfg(feature = "hydrate")]
 pub mod shared;
 
 #[cfg(feature = "hydrate")]
+use components::Home;
+
+#[cfg(feature = "hydrate")]
 #[component]
 pub fn App() -> impl IntoView {
-    let (count, set_count) = signal(0);
-
     view! {
-        <div class="app">
-            <h1>"Hello Leptos!"</h1>
-            <button on:click=move |_| set_count.update(|n| *n += 1)>
-                "Count: " {count}
-            </button>
-        </div>
+        <Router>
+            <main>
+                <Routes fallback=|| "Not found">
+                    <Route path=StaticSegment("") view=Home/>
+                </Routes>
+            </main>
+        </Router>
     }
 }
 
