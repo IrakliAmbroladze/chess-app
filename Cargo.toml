@@ -21,6 +21,7 @@ tower-http = { version = "0.6.8", features = ["fs", "cors"], optional = true }
 tracing = { version = "0.1.44", optional = true }
 tracing-subscriber = { version = "0.3.22", optional = true }
 futures-util = { version = "0.3.31", optional = true }
+uuid = { version = "1.19.0", features = ["v4"], optional = true }
 
 [features]
 hydrate = ["leptos", "leptos_router", "wasm-bindgen", "console_error_panic_hook"]
@@ -31,6 +32,7 @@ tracing = ["dep:tracing"]
 tracing-subscriber = ["dep:tracing-subscriber"]
 ssr = ["axum", "tokio", "tower-http", "tracing", "tracing-subscriber"]
 futures-util = ["dep:futures-util"]
+uuid = ["dep:uuid"]
 
 [[bin]]
 name = "server"
