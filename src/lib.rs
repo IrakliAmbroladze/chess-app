@@ -13,7 +13,7 @@ mod components;
 pub mod shared;
 
 #[cfg(feature = "hydrate")]
-use components::Home;
+use components::{Game, Home};
 
 #[cfg(feature = "hydrate")]
 #[component]
@@ -23,6 +23,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Not found">
                     <Route path=StaticSegment("") view=Home/>
+                    <Route path=(StaticSegment("game"), StaticSegment(":room_code")) view=Game/>
                 </Routes>
             </main>
         </Router>
