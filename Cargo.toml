@@ -20,6 +20,7 @@ tokio = { version = "1.49.0", features = ["full"], optional = true }
 tower-http = { version = "0.6.8", features = ["fs", "cors"], optional = true }
 tracing = { version = "0.1.44", optional = true }
 tracing-subscriber = { version = "0.3.22", optional = true }
+futures-util = { version = "0.3.31", optional = true }
 
 [features]
 hydrate = ["leptos", "leptos_router", "wasm-bindgen", "console_error_panic_hook"]
@@ -29,6 +30,7 @@ tower-http = ["dep:tower-http"]
 tracing = ["dep:tracing"]
 tracing-subscriber = ["dep:tracing-subscriber"]
 ssr = ["axum", "tokio", "tower-http", "tracing", "tracing-subscriber"]
+futures-util = ["dep:futures-util"]
 
 [[bin]]
 name = "server"
