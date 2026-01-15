@@ -13,6 +13,7 @@ leptos = { version = "0.8", features = ["csr"], optional = true }
 leptos_router = { version = "0.8", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 console_error_panic_hook = { version = "0.1", optional = true }
+web-sys = { version = "0.3.85", features = ["WebSocket", "MessageEvent"], optional = true }
 
 #backend
 axum = { version = "0.8.8", features = ["ws"], optional = true }
@@ -22,16 +23,15 @@ tracing = { version = "0.1.44", optional = true }
 tracing-subscriber = { version = "0.3.22", optional = true }
 futures-util = { version = "0.3.31", optional = true }
 uuid = { version = "1.19.0", features = ["v4"], optional = true }
-web-sys = { version = "0.3.85", features = ["WebSocket", "MessageEvent"], optional = true }
 
 [features]
-hydrate = ["leptos", "leptos_router", "wasm-bindgen", "console_error_panic_hook"]
+hydrate = ["leptos", "leptos_router", "wasm-bindgen", "console_error_panic_hook",  "web-sys"]
+ssr = ["axum", "tokio", "tower-http", "tracing", "tracing-subscriber", "futures-util", "uuid"]
 axum = ["dep:axum"]
 tokio = ["dep:tokio"]
 tower-http = ["dep:tower-http"]
 tracing = ["dep:tracing"]
 tracing-subscriber = ["dep:tracing-subscriber"]
-ssr = ["axum", "tokio", "tower-http", "tracing", "tracing-subscriber"]
 futures-util = ["dep:futures-util"]
 uuid = ["dep:uuid"]
 web-sys = ["dep:web-sys"]
