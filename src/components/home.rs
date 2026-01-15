@@ -3,6 +3,7 @@ use leptos_router::hooks::*;
 
 #[component]
 pub fn Home() -> impl IntoView {
+    let (room_code, set_room_code) = signal(String::new());
     let navigate = use_navigate();
     let navigate_clone1 = navigate.clone();
     let create_game = move |_| {
@@ -13,6 +14,12 @@ pub fn Home() -> impl IntoView {
         <div>
             <h1>"Chess Game"</h1>
             <button on:click=create_game>"Create New Game"</button>
+            <input
+                type="text"
+                placeholder="Room Code"
+                prop:value=room_code
+                on:input=move |ev| set_room_code.set(event_target_value(&ev))
+            />
         </div>
     }
 }
