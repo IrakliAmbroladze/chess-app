@@ -2,6 +2,8 @@
 use leptos::prelude::*;
 #[cfg(feature = "hydrate")]
 use wasm_bindgen::prelude::*;
+#[cfg(feature = "hydrate")]
+pub mod shared;
 
 #[cfg(feature = "hydrate")]
 #[component]

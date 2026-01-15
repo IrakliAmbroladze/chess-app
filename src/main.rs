@@ -3,6 +3,8 @@ use axum::{response::IntoResponse, routing::get, Router};
 #[cfg(feature = "ssr")]
 use tower_http::services::ServeDir;
 
+pub mod shared;
+
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
