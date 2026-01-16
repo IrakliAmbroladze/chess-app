@@ -20,6 +20,9 @@ use tower_http::services::ServeDir;
 pub mod shared;
 
 #[cfg(feature = "ssr")]
+mod game;
+
+#[cfg(feature = "ssr")]
 use shared::*;
 
 #[cfg(feature = "ssr")]
