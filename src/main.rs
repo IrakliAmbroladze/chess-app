@@ -108,6 +108,14 @@ async fn handle_socket(socket: WebSocket, state: AppState) {
 }
 
 #[cfg(feature = "ssr")]
+async fn send_to_player(player_id: &str, msg: ServerMessage, state: &AppState) {
+    let sessions = state.sessions.read().await;
+    if let Some(tx) = sessions.get(player_id) {
+        let _ = tx.send(msg);
+    }
+}
+
+#[cfg(feature = "ssr")]
 async fn find_player_room(player_id: &str, state: &AppState) -> Option<(String, PlayerColor)> {
     let rooms = state.rooms.read().await;
     for (code, room) in rooms.iter() {
