@@ -108,6 +108,22 @@ async fn handle_socket(socket: WebSocket, state: AppState) {
 }
 
 #[cfg(feature = "ssr")]
+async fn send_game_state(room_code: &str, state: &AppState) {
+    let games = state.games.read().await;
+    if let Some(game) = games.get(room_code) {
+        let msg = ServerMessage::GameState {
+            fen: game.get_fen(),
+            moves: game.moves.clone(),
+            white_time: game.white_time_ms,
+            black_time: game.black_time_ms,
+            current_turn: game.current_turn(),
+        };
+        drop(games);
+        broadcast_to_room(room_code, msg, state).await;
+    }
+}
+
+#[cfg(feature = "ssr")]
 async fn send_to_player(player_id: &str, msg: ServerMessage, state: &AppState) {
     let sessions = state.sessions.read().await;
     if let Some(tx) = sessions.get(player_id) {
