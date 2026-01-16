@@ -15,7 +15,7 @@ pub enum PlayerColor {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MoveRecord {
-    pub san: String,
+    pub san: String, // Standard Algebraic Notation
     pub from: String,
     pub to: String,
     pub timestamp: u64,
