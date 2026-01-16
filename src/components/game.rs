@@ -47,6 +47,15 @@ pub fn Game() -> impl IntoView {
         }
     };
 
+    let resign = move |_| {
+        if let Some(socket) = ws.get() {
+            let msg = ClientMessage::Resign;
+            if let Ok(json) = serde_json::to_string(&msg) {
+                let _ = socket.send_with_str(&json);
+            }
+        }
+    };
+
     view! {
         <div class="game-container">
             <div class="game-info">
@@ -94,6 +103,16 @@ pub fn Game() -> impl IntoView {
                         })
                     }
                 }}
+            </div>
+
+            <div class="game-controls">
+                <button
+                    class="btn btn-danger"
+                    on:click=resign
+                    disabled=move || game_over.get()
+                >
+                    "Resign"
+                </button>
             </div>
         </div>
     }
