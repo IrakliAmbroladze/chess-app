@@ -20,9 +20,10 @@ pub fn Game() -> impl IntoView {
             .unwrap_or_else(|| "Unknown".to_string())
     };
     view! {
-        <div class="game">
-            <h2>"Room: " {room_code}</h2>
-            <p>"Game will go here"</p>
+        <div class="game-container">
+            <div class="game-info">
+                <h2>"Room: " {room_code}</h2>
+            </div>
         </div>
     }
 }
