@@ -73,6 +73,17 @@ impl GameState {
         }
     }
 
+    fn determine_result(&self) -> GameResult {
+        match self.board.status() {
+            chess::BoardStatus::Checkmate => match self.board.side_to_move() {
+                Color::White => GameResult::BlackWins,
+                Color::Black => GameResult::WhiteWins,
+            },
+            chess::BoardStatus::Stalemate => GameResult::Draw,
+            _ => GameResult::Draw,
+        }
+    }
+
     fn current_time_ms() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
