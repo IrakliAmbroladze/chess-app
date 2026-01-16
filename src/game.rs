@@ -31,6 +31,37 @@ impl GameState {
             result: None,
         }
     }
+
+    pub fn update_time(&mut self) {
+        let current_time = Self::current_time_ms();
+        let elapsed = current_time.saturating_sub(self.last_move_time);
+
+        match self.board.side_to_move() {
+            Color::White => {
+                if self.white_time_ms > elapsed {
+                    self.white_time_ms -= elapsed;
+                } else {
+                    self.white_time_ms = 0;
+                    self.game_over = true;
+                    self.result = Some(GameResult::Timeout {
+                        winner: PlayerColor::Black,
+                    });
+                }
+            }
+            Color::Black => {
+                if self.black_time_ms > elapsed {
+                    self.black_time_ms -= elapsed;
+                } else {
+                    self.black_time_ms = 0;
+                    self.game_over = true;
+                    self.result = Some(GameResult::Timeout {
+                        winner: PlayerColor::White,
+                    });
+                }
+            }
+        }
+    }
+
     fn current_time_ms() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
