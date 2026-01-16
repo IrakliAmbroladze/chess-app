@@ -20,6 +20,17 @@ pub struct GameState {
 
 #[cfg(feature = "ssr")]
 impl GameState {
+    pub fn new(time_control_ms: u64) -> Self {
+        Self {
+            board: Board::default(),
+            moves: Vec::new(),
+            white_time_ms: time_control_ms,
+            black_time_ms: time_control_ms,
+            last_move_time: Self::current_time_ms(),
+            game_over: false,
+            result: None,
+        }
+    }
     fn current_time_ms() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
