@@ -23,9 +23,18 @@ pub struct MoveRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ClientMessage {
-    CreateRoom { room_code: String },
-    JoinRoom { room_code: String },
-    ChatMessage { text: String },
+    CreateRoom {
+        room_code: String,
+    },
+    JoinRoom {
+        room_code: String,
+    },
+    MakeMove {
+        from: String,
+        to: String,
+        promotion: Option<String>,
+    },
+    Resign,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
