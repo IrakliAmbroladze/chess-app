@@ -23,7 +23,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Not found">
                     <Route path=StaticSegment("") view=Home/>
-                    <Route path=(StaticSegment("game"), ParamSegment(":room_code")) view=Game/>
+                    <Route path=(StaticSegment("game"), ParamSegment("room_code")) view=Game/>
                 </Routes>
             </main>
         </Router>
