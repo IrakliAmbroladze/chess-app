@@ -12,17 +12,21 @@ pub fn Game() -> impl IntoView {
     let params = use_params::<GameParams>();
 
     let room_code = move || {
-        params
-            .read()
-            .as_ref()
-            .ok()
-            .and_then(|p| p.room_code.clone())
-            .unwrap_or_else(|| "Unknown".to_string())
+        params.with(|p| {
+            p.as_ref()
+                .ok()
+                .and_then(|params| params.room_code.clone())
+                .unwrap_or_else(|| "Unknown".to_string())
+        })
     };
+
+    let (status, set_status) = signal("Connecting...".to_string());
+
     view! {
         <div class="game-container">
             <div class="game-info">
                 <h2>"Room: " {room_code}</h2>
+                <p class="status">{status}</p>
             </div>
         </div>
     }
