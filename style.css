@@ -50,3 +50,22 @@ body {
   padding: 20px;
   gap: 20px;
 }
+
+.game-info {
+  background: white;
+  padding: 20px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.game-info h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.status {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 1.1em;
+}
