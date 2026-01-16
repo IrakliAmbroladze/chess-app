@@ -1,5 +1,12 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GameRoom {
+    pub room_code: String,
+    pub white_player: Option<String>,
+    pub black_player: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum PlayerColor {
     White,
