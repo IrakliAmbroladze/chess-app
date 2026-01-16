@@ -20,12 +20,13 @@ pub fn Game() -> impl IntoView {
             .and_then(|p| p.room_code.clone())
             .unwrap_or_else(|| "Unknown".to_string())
     };
-
+    let (fen, set_fen) =
+        signal("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".to_string());
     view! {
         <div class="game">
             <h2>"Room: " {room_code}</h2>
             <p>"Game will go here"</p>
-            <Board />
+            <Board fen=fen/>
         </div>
     }
 }
