@@ -47,10 +47,37 @@ pub enum ServerMessage {
         room_code: String,
         player_color: PlayerColor,
     },
-    ChatMessage {
-        text: String,
+    GameState {
+        fen: String,
+        moves: Vec<MoveRecord>,
+        white_time: u64,
+        black_time: u64,
+        current_turn: PlayerColor,
+    },
+    MoveMade {
+        from: String,
+        to: String,
+        san: String,
+        fen: String,
+    },
+    InvalidMove {
+        reason: String,
+    },
+    OpponentJoined,
+    OpponentLeft,
+    GameOver {
+        result: GameResult,
     },
     Error {
         message: String,
     },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum GameResult {
+    WhiteWins,
+    BlackWins,
+    Draw,
+    Resignation { winner: PlayerColor },
+    Timeout { winner: PlayerColor },
 }
