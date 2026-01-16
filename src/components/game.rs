@@ -1,3 +1,4 @@
+use crate::shared::*;
 use leptos::prelude::*;
 use leptos_router::hooks::*;
 use leptos_router::params::Params;
@@ -20,6 +21,7 @@ pub fn Game() -> impl IntoView {
         })
     };
 
+    let (player_color, set_player_color) = signal::<Option<PlayerColor>>(None);
     let (status, set_status) = signal("Connecting...".to_string());
 
     view! {
@@ -27,6 +29,9 @@ pub fn Game() -> impl IntoView {
             <div class="game-info">
                 <h2>"Room: " {room_code}</h2>
                 <p class="status">{status}</p>
+                {move || player_color.get().map(|c| {
+                    view! { <p class="player-color">"You are: " {format!("{:?}", c)}</p> }
+                })}
             </div>
         </div>
     }
