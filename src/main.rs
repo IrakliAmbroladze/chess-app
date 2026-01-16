@@ -88,12 +88,13 @@ async fn handle_socket(socket: WebSocket, state: AppState) {
 
     // Receive task
     let sessions = state.sessions.clone();
+    let recv_state = state.clone();
+    let recv_player_id = player_id.clone();
     let mut recv_task = tokio::spawn(async move {
         while let Some(Ok(msg)) = receiver.next().await {
             if let Message::Text(text) = msg {
                 if let Ok(client_msg) = serde_json::from_str::<ClientMessage>(&text) {
-                    tracing::info!("Received: {:?}", client_msg);
-                    // Handle message
+                    handle_client_message(client_msg, &recv_player_id, &recv_state).await;
                 }
             }
         }
