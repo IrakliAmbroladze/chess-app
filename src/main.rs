@@ -106,3 +106,17 @@ async fn handle_socket(socket: WebSocket, state: AppState) {
 
     state.sessions.write().await.remove(&player_id);
 }
+
+#[cfg(feature = "ssr")]
+async fn find_player_room(player_id: &str, state: &AppState) -> Option<(String, PlayerColor)> {
+    let rooms = state.rooms.read().await;
+    for (code, room) in rooms.iter() {
+        if room.white_player.as_deref() == Some(player_id) {
+            return Some((code.clone(), PlayerColor::White));
+        }
+        if room.black_player.as_deref() == Some(player_id) {
+            return Some((code.clone(), PlayerColor::Black));
+        }
+    }
+    None
+}
