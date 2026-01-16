@@ -32,6 +32,61 @@ impl GameState {
         }
     }
 
+    pub fn make_move(
+        &mut self,
+        from_str: &str,
+        to_str: &str,
+        promotion: Option<&str>,
+    ) -> Result<String, String> {
+        if self.game_over {
+            return Err("Game is over".to_string());
+        }
+
+        self.update_time();
+
+        let from = Square::from_str(from_str).map_err(|_| "Invalid from square")?;
+        let to = Square::from_str(to_str).map_err(|_| "Invalid to square")?;
+
+        let promotion_piece = if let Some(p) = promotion {
+            match p {
+                "q" => Some(Piece::Queen),
+                "r" => Some(Piece::Rook),
+                "b" => Some(Piece::Bishop),
+                "n" => Some(Piece::Knight),
+                _ => None,
+            }
+        } else {
+            None
+        };
+
+        let chess_move = ChessMove::new(from, to, promotion_piece);
+
+        if !self.board.legal(chess_move) {
+            return Err("Illegal move".to_string());
+        }
+
+        let san = self.move_to_san(&chess_move);
+
+        self.board = self.board.make_move_new(chess_move);
+
+        let move_record = MoveRecord {
+            san: san.clone(),
+            from: from_str.to_string(),
+            to: to_str.to_string(),
+            timestamp: Self::current_time_ms(),
+        };
+
+        self.moves.push(move_record);
+        self.last_move_time = Self::current_time_ms();
+
+        if self.board.status() != chess::BoardStatus::Ongoing {
+            self.game_over = true;
+            self.result = Some(self.determine_result());
+        }
+
+        Ok(san)
+    }
+
     pub fn update_time(&mut self) {
         let current_time = Self::current_time_ms();
         let elapsed = current_time.saturating_sub(self.last_move_time);
