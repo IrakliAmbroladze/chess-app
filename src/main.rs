@@ -17,29 +17,38 @@ use tokio::sync::RwLock;
 use tower_http::services::ServeDir;
 
 #[cfg(feature = "ssr")]
+mod game;
+#[cfg(feature = "ssr")]
 pub mod shared;
 
 #[cfg(feature = "ssr")]
-mod game;
+use crate::game::GameState;
+#[cfg(feature = "ssr")]
+use crate::shared::*;
 
 #[cfg(feature = "ssr")]
-use shared::*;
-
+type GameRooms = Arc<RwLock<HashMap<String, GameRoom>>>;
 #[cfg(feature = "ssr")]
-type Sessions = Arc<RwLock<HashMap<String, tokio::sync::mpsc::UnboundedSender<ServerMessage>>>>;
+type GameStates = Arc<RwLock<HashMap<String, GameState>>>;
+#[cfg(feature = "ssr")]
+type PlayerSessions =
+    Arc<RwLock<HashMap<String, tokio::sync::mpsc::UnboundedSender<ServerMessage>>>>;
 
 #[cfg(feature = "ssr")]
 #[derive(Clone)]
 struct AppState {
-    sessions: Sessions,
+    rooms: GameRooms,
+    games: GameStates,
+    sessions: PlayerSessions,
 }
-
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
     let state = AppState {
+        rooms: Arc::new(RwLock::new(HashMap::new())),
+        games: Arc::new(RwLock::new(HashMap::new())),
         sessions: Arc::new(RwLock::new(HashMap::new())),
     };
 
