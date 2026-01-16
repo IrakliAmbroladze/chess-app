@@ -1,6 +1,7 @@
 use crate::components::Board;
 use crate::shared::*;
 use leptos::either::Either;
+use leptos::prelude::set_interval;
 use leptos::prelude::*;
 use leptos_router::hooks::*;
 use leptos_router::params::Params;
@@ -39,6 +40,37 @@ pub fn Game() -> impl IntoView {
     let (current_turn, set_current_turn) = signal(PlayerColor::White);
     let (status, set_status) = signal("Connecting...".to_string());
     let (game_over, set_game_over) = signal(false);
+
+    set_interval(
+        move || {
+            if game_over.get() {
+                return;
+            }
+
+            let turn = current_turn.get();
+            match turn {
+                PlayerColor::White => {
+                    let current = white_time.get();
+                    if current > 0 {
+                        set_white_time.set(current - 1);
+                    } else if current == 0 {
+                        set_game_over.set(true);
+                        set_status.set("Black wins on time!".to_string());
+                    }
+                }
+                PlayerColor::Black => {
+                    let current = black_time.get();
+                    if current > 0 {
+                        set_black_time.set(current - 1);
+                    } else if current == 0 {
+                        set_game_over.set(true);
+                        set_status.set("White wins on time!".to_string());
+                    }
+                }
+            }
+        },
+        std::time::Duration::from_secs(1),
+    );
 
     Effect::new(move |_| {
         let ws_url = format!("ws://localhost:3000/ws");
