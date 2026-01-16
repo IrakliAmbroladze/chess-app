@@ -141,3 +141,10 @@ async fn find_player_room(player_id: &str, state: &AppState) -> Option<(String, 
     }
     None
 }
+
+#[cfg(feature = "ssr")]
+async fn cleanup_player(player_id: &str, state: &AppState) {
+    if let Some((room_code, _)) = find_player_room(player_id, state).await {
+        broadcast_to_room(&room_code, ServerMessage::OpponentLeft, state).await;
+    }
+}
