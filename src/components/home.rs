@@ -21,7 +21,7 @@ pub fn Home() -> impl IntoView {
     };
 
     view! {
-        <div>
+        <div class="home">
             <h1>"Chess Game"</h1>
             <button on:click=create_game>"Create New Game"</button>
             <input
