@@ -116,6 +116,19 @@ async fn send_to_player(player_id: &str, msg: ServerMessage, state: &AppState) {
 }
 
 #[cfg(feature = "ssr")]
+async fn broadcast_to_room(room_code: &str, msg: ServerMessage, state: &AppState) {
+    let rooms = state.rooms.read().await;
+    if let Some(room) = rooms.get(room_code) {
+        if let Some(white) = &room.white_player {
+            send_to_player(white, msg.clone(), state).await;
+        }
+        if let Some(black) = &room.black_player {
+            send_to_player(black, msg, state).await;
+        }
+    }
+}
+
+#[cfg(feature = "ssr")]
 async fn find_player_room(player_id: &str, state: &AppState) -> Option<(String, PlayerColor)> {
     let rooms = state.rooms.read().await;
     for (code, room) in rooms.iter() {
