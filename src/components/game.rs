@@ -19,7 +19,6 @@ pub fn Game() -> impl IntoView {
             .and_then(|p| p.room_code.clone())
             .unwrap_or_else(|| "Unknown".to_string())
     };
-
     view! {
         <div class="game">
             <h2>"Room: " {room_code}</h2>
