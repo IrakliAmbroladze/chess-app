@@ -62,6 +62,17 @@ impl GameState {
         }
     }
 
+    pub fn get_fen(&self) -> String {
+        format!("{}", self.board)
+    }
+
+    pub fn current_turn(&self) -> PlayerColor {
+        match self.board.side_to_move() {
+            Color::White => PlayerColor::White,
+            Color::Black => PlayerColor::Black,
+        }
+    }
+
     fn current_time_ms() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
