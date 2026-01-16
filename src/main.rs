@@ -108,6 +108,149 @@ async fn handle_socket(socket: WebSocket, state: AppState) {
 }
 
 #[cfg(feature = "ssr")]
+async fn handle_client_message(msg: ClientMessage, player_id: &str, state: &AppState) {
+    match msg {
+        ClientMessage::CreateRoom { room_code } => {
+            tracing::info!("Creating room {} for player {}", room_code, player_id);
+
+            let rooms = state.rooms.read().await;
+            if rooms.contains_key(&room_code) {
+                drop(rooms);
+                send_to_player(
+                    player_id,
+                    ServerMessage::Error {
+                        message: "Room code already in use".to_string(),
+                    },
+                    state,
+                )
+                .await;
+                return;
+            }
+            drop(rooms);
+
+            let room = GameRoom {
+                room_code: room_code.clone(),
+                white_player: Some(player_id.to_string()),
+                black_player: None,
+            };
+
+            state.rooms.write().await.insert(room_code.clone(), room);
+            state
+                .games
+                .write()
+                .await
+                .insert(room_code.clone(), GameState::new(600_000));
+
+            send_to_player(
+                player_id,
+                ServerMessage::RoomCreated {
+                    room_code,
+                    player_color: PlayerColor::White,
+                },
+                state,
+            )
+            .await;
+        }
+
+        ClientMessage::JoinRoom { room_code } => {
+            tracing::info!("Player {} attempting to join room {}", player_id, room_code);
+            let mut rooms = state.rooms.write().await;
+
+            if let Some(room) = rooms.get_mut(&room_code) {
+                if room.black_player.is_none() {
+                    room.black_player = Some(player_id.to_string());
+
+                    send_to_player(
+                        player_id,
+                        ServerMessage::RoomJoined {
+                            room_code: room_code.clone(),
+                            player_color: PlayerColor::Black,
+                        },
+                        state,
+                    )
+                    .await;
+
+                    if let Some(white_id) = &room.white_player {
+                        send_to_player(white_id, ServerMessage::OpponentJoined, state).await;
+                    }
+
+                    drop(rooms);
+                    send_game_state(&room_code, state).await;
+                } else {
+                    send_to_player(
+                        player_id,
+                        ServerMessage::Error {
+                            message: "Room is full".to_string(),
+                        },
+                        state,
+                    )
+                    .await;
+                }
+            } else {
+                send_to_player(
+                    player_id,
+                    ServerMessage::Error {
+                        message: "Room not found".to_string(),
+                    },
+                    state,
+                )
+                .await;
+            }
+        }
+
+        ClientMessage::MakeMove {
+            from,
+            to,
+            promotion,
+        } => {
+            if let Some((room_code, _)) = find_player_room(player_id, state).await {
+                let mut games = state.games.write().await;
+
+                if let Some(game) = games.get_mut(&room_code) {
+                    match game.make_move(&from, &to, promotion.as_deref()) {
+                        Ok(san) => {
+                            let fen = game.get_fen();
+                            drop(games);
+
+                            broadcast_to_room(
+                                &room_code,
+                                ServerMessage::MoveMade { from, to, san, fen },
+                                state,
+                            )
+                            .await;
+
+                            send_game_state(&room_code, state).await;
+                        }
+                        Err(reason) => {
+                            send_to_player(player_id, ServerMessage::InvalidMove { reason }, state)
+                                .await;
+                        }
+                    }
+                }
+            }
+        }
+
+        ClientMessage::Resign => {
+            if let Some((room_code, color)) = find_player_room(player_id, state).await {
+                let winner = match color {
+                    PlayerColor::White => PlayerColor::Black,
+                    PlayerColor::Black => PlayerColor::White,
+                };
+
+                broadcast_to_room(
+                    &room_code,
+                    ServerMessage::GameOver {
+                        result: GameResult::Resignation { winner },
+                    },
+                    state,
+                )
+                .await;
+            }
+        }
+    }
+}
+
+#[cfg(feature = "ssr")]
 async fn send_game_state(room_code: &str, state: &AppState) {
     let games = state.games.read().await;
     if let Some(game) = games.get(room_code) {
