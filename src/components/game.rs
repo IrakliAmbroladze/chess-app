@@ -1,3 +1,4 @@
+use crate::components::Board;
 use leptos::prelude::*;
 use leptos_router::hooks::*;
 use leptos_router::params::Params;
@@ -24,6 +25,7 @@ pub fn Game() -> impl IntoView {
         <div class="game">
             <h2>"Room: " {room_code}</h2>
             <p>"Game will go here"</p>
+            <Board />
         </div>
     }
 }
