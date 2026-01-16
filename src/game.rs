@@ -84,6 +84,53 @@ impl GameState {
         }
     }
 
+    // Simplified SAN notation generator
+    fn move_to_san(&self, chess_move: &ChessMove) -> String {
+        let piece = self.board.piece_on(chess_move.get_source());
+        let capture = self.board.piece_on(chess_move.get_dest()).is_some();
+
+        let mut san = String::new();
+
+        if let Some(p) = piece {
+            match p {
+                Piece::King => san.push('K'),
+                Piece::Queen => san.push('Q'),
+                Piece::Rook => san.push('R'),
+                Piece::Bishop => san.push('B'),
+                Piece::Knight => san.push('N'),
+                Piece::Pawn => {
+                    if capture {
+                        san.push(
+                            format!("{}", chess_move.get_source())
+                                .chars()
+                                .next()
+                                .unwrap(),
+                        );
+                    }
+                }
+            }
+        }
+
+        if capture {
+            san.push('x');
+        }
+
+        san.push_str(&format!("{}", chess_move.get_dest()));
+
+        if let Some(promo) = chess_move.get_promotion() {
+            san.push('=');
+            match promo {
+                Piece::Queen => san.push('Q'),
+                Piece::Rook => san.push('R'),
+                Piece::Bishop => san.push('B'),
+                Piece::Knight => san.push('N'),
+                _ => {}
+            }
+        }
+
+        san
+    }
+
     fn current_time_ms() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
