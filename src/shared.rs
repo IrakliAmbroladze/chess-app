@@ -7,7 +7,7 @@ pub struct GameRoom {
     pub black_player: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum PlayerColor {
     White,
     Black,
