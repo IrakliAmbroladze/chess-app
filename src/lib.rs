@@ -3,7 +3,7 @@ use leptos::prelude::*;
 #[cfg(feature = "hydrate")]
 use leptos_router::components::*;
 #[cfg(feature = "hydrate")]
-use leptos_router::StaticSegment;
+use leptos_router::{ParamSegment, StaticSegment};
 #[cfg(feature = "hydrate")]
 use wasm_bindgen::prelude::*;
 
@@ -23,7 +23,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Not found">
                     <Route path=StaticSegment("") view=Home/>
-                    <Route path=(StaticSegment("game"), StaticSegment(":room_code")) view=Game/>
+                    <Route path=(StaticSegment("game"), ParamSegment(":room_code")) view=Game/>
                 </Routes>
             </main>
         </Router>
