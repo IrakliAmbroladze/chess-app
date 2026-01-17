@@ -80,8 +80,6 @@ where
                     key=|(f, r)| format!("{}{}", f, r)
                     children=move |(file, rank)| {
                         let square_name = format!("{}{}", (b'a' + file as u8) as char, rank + 1);
-
-                        // Clone strings before they are moved into closures
                         let sq_click = square_name.clone();
                         let sq_selected = square_name.clone();
                         let sq_memo = square_name.clone();

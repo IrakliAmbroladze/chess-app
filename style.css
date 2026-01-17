@@ -237,3 +237,55 @@ body {
     font-size: 36px;
   }
 }
+
+/* Promotion Dialog */
+.board-container {
+  position: relative;
+}
+
+.promotion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.promotion-dialog {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.promotion-dialog h3 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #333;
+}
+
+.promotion-pieces {
+  display: flex;
+  gap: 15px;
+}
+
+.promotion-button {
+  width: 80px;
+  height: 80px;
+  border: 3px solid #667eea;
+  background: white;
+  border-radius: 8px;
+  font-size: 48px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.promotion-button:hover {
+  background: #667eea;
+  transform: scale(1.1);
+}
