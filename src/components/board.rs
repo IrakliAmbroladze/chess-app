@@ -65,51 +65,90 @@ where
     let is_flipped = move || player_color.get() == Some(PlayerColor::Black);
 
     view! {
-        <div class="chess-board" class:flipped=is_flipped>
-            <For
-                each=move || {
-                    let mut squares = Vec::new();
-                    for rank in (0..8).rev() {
-                        for file in 0..8 {
-                            squares.push((file, rank));
+        <div class="board-container">
+            <div class="chess-board" class:flipped=is_flipped>
+                <For
+                    each=move || {
+                        let mut squares = Vec::new();
+                        for rank in (0..8).rev() {
+                            for file in 0..8 {
+                                squares.push((file, rank));
+                            }
+                        }
+                        squares
+                    }
+                    key=|(f, r)| format!("{}{}", f, r)
+                    children=move |(file, rank)| {
+                        let square_name = format!("{}{}", (b'a' + file as u8) as char, rank + 1);
+
+                        // Clone strings before they are moved into closures
+                        let sq_click = square_name.clone();
+                        let sq_selected = square_name.clone();
+                        let sq_memo = square_name.clone();
+
+                        let piece = Memo::new(move |_| {
+                            board_state.get().get(&sq_memo).cloned()
+                        });
+
+                        let is_selected = move || {
+                            selected_square.get() == Some(sq_selected.clone())
+                        };
+
+                        let is_light = (file + rank) % 2 == 0;
+
+                        view! {
+                            <div
+                                class="square"
+                                class:light=is_light
+                                class:dark=!is_light
+                                class:selected=is_selected
+                                on:click=move |_| handle_square_click(sq_click.clone())
+                            >
+                                {move || piece.get().map(|p| {
+                                    view! { <div class="piece">{get_piece_symbol(&p)}</div> }
+                                })}
+                            </div>
                         }
                     }
-                    squares
-                }
-                key=|(f, r)| format!("{}{}", f, r)
-                children=move |(file, rank)| {
-                    let square_name = format!("{}{}", (b'a' + file as u8) as char, rank + 1);
+                />
+            </div>
 
-                    // Clone strings before they are moved into closures
-                    let sq_click = square_name.clone();
-                    let sq_selected = square_name.clone();
-                    let sq_memo = square_name.clone();
-
-                    let piece = Memo::new(move |_| {
-                        board_state.get().get(&sq_memo).cloned()
-                    });
-
-                    let is_selected = move || {
-                        selected_square.get() == Some(sq_selected.clone())
-                    };
-
-                    let is_light = (file + rank) % 2 == 0;
-
-                    view! {
-                        <div
-                            class="square"
-                            class:light=is_light
-                            class:dark=!is_light
-                            class:selected=is_selected
-                            on:click=move |_| handle_square_click(sq_click.clone())
-                        >
-                            {move || piece.get().map(|p| {
-                                view! { <div class="piece">{get_piece_symbol(&p)}</div> }
-                            })}
+            {move || promotion_state.get().map(|_| {
+                let color = current_turn.get();
+                view! {
+                    <div class="promotion-overlay">
+                        <div class="promotion-dialog">
+                            <h3>"Choose promotion piece"</h3>
+                            <div class="promotion-pieces">
+                                <button
+                                    class="promotion-button"
+                                    on:click=move |_| handle_promotion("q")
+                                >
+                                    {if color == PlayerColor::White { "♕" } else { "♛" }}
+                                </button>
+                                <button
+                                    class="promotion-button"
+                                    on:click=move |_| handle_promotion("r")
+                                >
+                                    {if color == PlayerColor::White { "♖" } else { "♜" }}
+                                </button>
+                                <button
+                                    class="promotion-button"
+                                    on:click=move |_| handle_promotion("b")
+                                >
+                                    {if color == PlayerColor::White { "♗" } else { "♝" }}
+                                </button>
+                                <button
+                                    class="promotion-button"
+                                    on:click=move |_| handle_promotion("n")
+                                >
+                                    {if color == PlayerColor::White { "♘" } else { "♞" }}
+                                </button>
+                            </div>
                         </div>
-                    }
+                    </div>
                 }
-            />
+            })}
         </div>
     }
 }
