@@ -1,5 +1,5 @@
 # Build stage
-FROM rust:1.85 as builder
+FROM rust:1.92 as builder
 
 # Install trunk and wasm target
 RUN cargo install trunk --locked
