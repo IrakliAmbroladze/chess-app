@@ -11,9 +11,10 @@ pub fn Board<F>(
     game_over: ReadSignal<bool>,
 ) -> impl IntoView
 where
-    F: Fn(String, String) + 'static + Copy + Send,
+    F: Fn(String, String, Option<String>) + 'static + Copy + Send,
 {
     let (selected_square, set_selected_square) = signal::<Option<String>>(None);
+    let (promotion_state, set_promotion_state) = signal::<Option<(String, String)>>(None);
 
     let board_state = Memo::new(move |_| parse_fen(&fen.get()));
 
@@ -31,7 +32,11 @@ where
 
         if let Some(from) = selected_square.get() {
             if from != square {
-                on_move(from.clone(), square.clone());
+                if is_promotion_move(&from, &square, &board_state.get(), turn) {
+                    set_promotion_state.set(Some((from.clone(), square.clone())));
+                } else {
+                    on_move(from.clone(), square.clone(), None);
+                }
             }
             set_selected_square.set(None);
         } else {
@@ -99,6 +104,29 @@ where
                 }
             />
         </div>
+    }
+}
+
+fn is_promotion_move(
+    from: &str,
+    to: &str,
+    board: &HashMap<String, String>,
+    turn: PlayerColor,
+) -> bool {
+    if let Some(piece) = board.get(from) {
+        let is_pawn = piece == "P" || piece == "p";
+        if !is_pawn {
+            return false;
+        }
+
+        let to_rank = to.chars().nth(1).and_then(|c| c.to_digit(10)).unwrap_or(0);
+
+        match turn {
+            PlayerColor::White => to_rank == 8,
+            PlayerColor::Black => to_rank == 1,
+        }
+    } else {
+        false
     }
 }
 
