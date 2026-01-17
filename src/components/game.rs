@@ -73,7 +73,21 @@ pub fn Game() -> impl IntoView {
     );
 
     Effect::new(move |_| {
-        let ws_url = format!("ws://localhost:3000/ws");
+        let protocol = if web_sys::window()
+            .and_then(|w| w.location().protocol().ok())
+            .map(|p| p == "https:")
+            .unwrap_or(false)
+        {
+            "wss"
+        } else {
+            "ws"
+        };
+
+        let host = web_sys::window()
+            .and_then(|w| w.location().host().ok())
+            .unwrap_or_else(|| "localhost:3000".to_string());
+
+        let ws_url = format!("{}://{}/ws", protocol, host);
         match WebSocket::new(&ws_url) {
             Ok(socket) => {
                 let socket_clone = socket.clone();
