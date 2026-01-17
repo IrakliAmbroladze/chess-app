@@ -55,6 +55,13 @@ where
         }
     };
 
+    let handle_promotion = move |piece: &str| {
+        if let Some((from, to)) = promotion_state.get() {
+            on_move(from, to, Some(piece.to_string()));
+            set_promotion_state.set(None);
+        }
+    };
+
     let is_flipped = move || player_color.get() == Some(PlayerColor::Black);
 
     view! {
