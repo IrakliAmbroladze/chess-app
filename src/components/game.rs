@@ -127,12 +127,12 @@ pub fn Game() -> impl IntoView {
         }
     });
 
-    let make_move = move |from: String, to: String| {
+    let make_move = move |from: String, to: String, promotion: Option<String>| {
         if let Some(socket) = ws.get() {
             let msg = ClientMessage::MakeMove {
                 from,
                 to,
-                promotion: None,
+                promotion,
             };
             if let Ok(json) = serde_json::to_string(&msg) {
                 let _ = socket.send_with_str(&json);
